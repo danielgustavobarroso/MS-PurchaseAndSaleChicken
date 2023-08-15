@@ -1,10 +1,10 @@
 package com.retooling.pursalchi.service;
 
+import java.text.ParseException;
 import java.util.List;
 
 import com.retooling.pursalchi.entity.SaleChicken;
 import com.retooling.pursalchi.exception.SaleChickenAmountException;
-import com.retooling.pursalchi.exception.SaleChickenException;
 
 public interface SaleChickenService {
 	
@@ -12,6 +12,6 @@ public interface SaleChickenService {
 
 	public SaleChicken saveSaleChicken(SaleChicken saleChicken);
 	
-	public SaleChicken generateSaleChicken(SaleChicken saleChicken) throws SaleChickenException, SaleChickenAmountException;
+	public SaleChicken generateSaleChicken(SaleChicken saleChicken) throws SaleChickenAmountException, ParseException;
 	
 }

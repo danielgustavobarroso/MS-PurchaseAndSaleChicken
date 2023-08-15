@@ -1,5 +1,6 @@
 package com.retooling.pursalchi.controller;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.retooling.pursalchi.entity.SaleChicken;
 import com.retooling.pursalchi.exception.SaleChickenAmountException;
-import com.retooling.pursalchi.exception.SaleChickenException;
 import com.retooling.pursalchi.exception.SaleValidationErrorException;
 import com.retooling.pursalchi.service.SaleChickenService;
 
@@ -42,7 +42,7 @@ public class SaleChickenController {
 	//Guardar una venta de gallinas
 	@PostMapping("sale-chicken")
 	public ResponseEntity<SaleChicken> generateSaleChicken(@Valid @RequestBody SaleChicken saleChicken,
-			BindingResult bindingResult) throws SaleChickenException, SaleChickenAmountException, SaleValidationErrorException {		
+			BindingResult bindingResult) throws SaleChickenAmountException, SaleValidationErrorException, ParseException {		
 		logger.info("Controller - Calling method generateSaleChicken...");
 		if (bindingResult.hasErrors()) {
 			String message = new String();

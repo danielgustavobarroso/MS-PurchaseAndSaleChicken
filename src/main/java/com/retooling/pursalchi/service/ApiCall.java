@@ -2,6 +2,7 @@ package com.retooling.pursalchi.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.retooling.pursalchi.entity.Chicken;
@@ -37,14 +39,16 @@ public class ApiCall {
 	@Value("${api.microservice.date-simulator}")
 	private String urlDateSimulator;
 	
+	@Value("${api.microservice.use-date-simulator}")
+	private boolean useDateSimulator;
+	
 	public ApiCall() {
 		super();
 	}
 	
 	public Farm getFarm(String id) {
 		logger.info("Service - Calling getFarm...");
-		Farm farm = restTemplate.getForObject(urlFarm+"/{id}", Farm.class, id);
-		return farm;
+		return restTemplate.getForObject(urlFarm+"/{id}", Farm.class, id);
 	}
 
 	public void updateFarm(Farm farm) {
@@ -53,10 +57,14 @@ public class ApiCall {
 	}
 
 	public List<Chicken> getChickens(String idFarm) {
-		logger.info("Service - Calling getChickens...");
-		ChickenState chickenAvailable = ChickenState.Available;
-		return Arrays.asList(restTemplate.getForObject(urlChicken+"/farms/{idFarm}", Chicken[].class, idFarm))
+		try {
+			logger.info("Service - Calling getChickens...");
+			ChickenState chickenAvailable = ChickenState.Available;
+			return Arrays.asList(restTemplate.getForObject(urlChicken+"/farms/{idFarm}", Chicken[].class, idFarm))
 				.stream().filter(c -> c.getState().equals(chickenAvailable.getState())).collect(Collectors.toList());
+		} catch (HttpClientErrorException.NotFound ex) {
+			return new ArrayList<>();
+		}
 	}
 
 	public Chicken insertChicken(Chicken chicken) {
@@ -76,8 +84,12 @@ public class ApiCall {
 	
 	public Date getDate() throws ParseException {
 		logger.info("Service - Calling getDate...");
-		String dateStr = restTemplate.getForObject(urlDateSimulator+"/get-date", String.class);
-		return (new SimpleDateFormat("yyyyMMddHHmmss").parse(dateStr));
+		if (useDateSimulator) {
+			String dateStr = restTemplate.getForObject(urlDateSimulator+"/get-date", String.class);
+			return (new SimpleDateFormat("yyyyMMddHHmmss").parse(dateStr));
+		} else {
+			return new Date();
+		}
 	}
 	
 }

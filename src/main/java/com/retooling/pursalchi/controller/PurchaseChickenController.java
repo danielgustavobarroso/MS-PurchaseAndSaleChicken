@@ -1,5 +1,6 @@
 package com.retooling.pursalchi.controller;
 
+import java.text.ParseException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.retooling.pursalchi.entity.PurchaseChicken;
-import com.retooling.pursalchi.exception.PurchaseChickenException;
 import com.retooling.pursalchi.exception.PurchaseChickenLimitException;
 import com.retooling.pursalchi.exception.PurchaseChickenMoneyException;
 import com.retooling.pursalchi.exception.PurchaseValidationErrorException;
@@ -40,8 +40,8 @@ public class PurchaseChickenController {
 	//Guardar una compra de gallinas
 	@PostMapping("purchase-chicken")
 	public ResponseEntity<PurchaseChicken> generatePurchaseChicken(@Valid @RequestBody PurchaseChicken purchaseChicken,
-			BindingResult bindingResult) throws PurchaseChickenException, PurchaseChickenMoneyException,
-			PurchaseChickenLimitException, PurchaseValidationErrorException {		
+			BindingResult bindingResult) throws PurchaseChickenMoneyException, PurchaseChickenLimitException,
+			PurchaseValidationErrorException, ParseException {		
 		logger.info("Controller - Calling method generatePurchaseChicken...");
 		if (bindingResult.hasErrors()) {
 			String message = new String();
